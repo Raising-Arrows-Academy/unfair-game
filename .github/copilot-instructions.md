@@ -81,6 +81,7 @@ Each file should have a single, clear responsibility:
 - Use meaningful variable names
 - Keep functions under 20 lines when possible
 - Document complex logic with comments
+- Use flake8 for linting (configured in CI)
 
 ### Testing Strategy
 - **Framework**: Use pytest for all automated testing
@@ -90,6 +91,7 @@ Each file should have a single, clear responsibility:
 - **Manual Testing**: Focus on user experience and edge cases
 - **CLI Testing**: Test both direct commands and interactive modes
 - **Config Testing**: Validate configuration loading/saving/editing
+- **Continuous Integration**: GitHub Actions workflow runs tests on all Python versions (3.10, 3.11, 3.12)
 
 ## Implementation History & Context
 

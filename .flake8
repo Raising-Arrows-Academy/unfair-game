@@ -1,0 +1,12 @@
+[flake8]
+exclude = 
+    .venv,
+    __pycache__,
+    .git,
+    .pytest_cache,
+    to_replace_main.py
+max-line-length = 88
+max-complexity = 10
+ignore = 
+    E203,
+    W503
