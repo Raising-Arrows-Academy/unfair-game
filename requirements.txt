@@ -1,3 +1,7 @@
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0  # For coverage reports
+
 # No external dependencies yet
 # Add packages here as needed, e.g.:
 # requests>=2.25.0

@@ -26,6 +26,7 @@ game.py          # Core game logic and state management
 wheel.py         # Wheel mechanics and outcome processing
 interactive.py   # Interactive menu system
 utils.py         # Shared utilities and helpers
+tests/           # Test directory with pytest tests
 ```
 
 ### 3. Dual Mode Architecture
@@ -82,10 +83,13 @@ Each file should have a single, clear responsibility:
 - Document complex logic with comments
 
 ### Testing Strategy
-- Manual testing during development
-- Focus on user experience and edge cases
-- Test both CLI and interactive modes
-- Validate configuration loading/saving
+- **Framework**: Use pytest for all automated testing
+- **Coverage**: Aim for good test coverage, especially core game logic
+- **Test Types**: Unit tests for individual functions, integration tests for CLI commands
+- **Test-Driven Development**: Write tests alongside new features when possible
+- **Manual Testing**: Focus on user experience and edge cases
+- **CLI Testing**: Test both direct commands and interactive modes
+- **Config Testing**: Validate configuration loading/saving/editing
 
 ## Implementation History & Context
 
@@ -119,6 +123,8 @@ When implementing new features, consider:
 3. Can this be done with standard library?
 4. Does this improve the teacher/student experience?
 5. Is the CLI interface intuitive?
+6. Are there tests for this functionality?
+7. Do all tests pass after changes?
 
 ## Notes for Copilot
 - Always check current file structure before making changes
