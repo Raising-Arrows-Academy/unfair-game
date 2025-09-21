@@ -77,6 +77,32 @@ class GameState:
         """
         return self.teams[self.current_turn_index]
 
+    def get_teams(self) -> List[str]:
+        """
+        Get list of all team names.
+
+        Returns:
+            List of team names
+        """
+        return self.teams.copy()
+
+    def set_current_team(self, team_name: str) -> None:
+        """
+        Set the current team (for starting team selection).
+
+        Args:
+            team_name: Name of the team to set as current
+
+        Raises:
+            ValueError: If team name is not valid
+        """
+        if team_name not in self.teams:
+            raise ValueError(f"Team '{team_name}' not found in game")
+
+        self.current_turn_index = self.teams.index(team_name)
+        self.add_event("team_changed", f"Current team set to {team_name}")
+        self.save_state()
+
     def get_scores(self) -> Dict[str, int]:
         """
         Get current scores for all teams.
@@ -135,6 +161,28 @@ class GameState:
         self.events.append(event)
 
         # Update timestamp and save
+        self.last_updated = datetime.now().isoformat()
+        self.save_state()
+
+    def add_event(self, action: str, description: str, team: str = "", score_changes: Optional[Dict[str, int]] = None) -> None:
+        """
+        Add a simple event to the game history.
+
+        Args:
+            action: Type of action that occurred
+            description: Description of what happened
+            team: Team involved (optional)
+            score_changes: Score changes (optional)
+        """
+        event = GameEvent(
+            timestamp=datetime.now().isoformat(),
+            round_number=self.current_round,
+            team=team,
+            action=action,
+            description=description,
+            score_changes=score_changes or {}
+        )
+        self.events.append(event)
         self.last_updated = datetime.now().isoformat()
         self.save_state()
 
