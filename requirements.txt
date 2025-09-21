@@ -1,0 +1,4 @@
+# No external dependencies yet
+# Add packages here as needed, e.g.:
+# requests>=2.25.0
+# click>=8.0.0
