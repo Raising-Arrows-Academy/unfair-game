@@ -21,11 +21,13 @@ Maintain clear file organization with distinct responsibilities:
 
 ```
 main.py          # Entry point, argument parsing, orchestration
-config.py        # Configuration management (load/save/edit)
-game.py          # Core game logic and state management
-wheel.py         # Wheel mechanics and outcome processing
-interactive.py   # Interactive menu system
-utils.py         # Shared utilities and helpers
+game/            # Game package containing core functionality
+  __init__.py    # Package initialization
+  config.py      # Configuration management (load/save/edit)
+  state.py       # Game state management and persistence
+  wheel.py       # Wheel mechanics and outcome processing (future)
+  interactive.py # Interactive menu system (future)
+  utils.py       # Shared utilities and helpers (future)
 tests/           # Test directory with pytest tests
 ```
 

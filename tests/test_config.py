@@ -1,5 +1,5 @@
 """
-Tests for config.py module.
+Tests for game/config.py module.
 
 Tests configuration loading, saving, updating, and validation.
 """
@@ -8,7 +8,7 @@ import json
 import os
 import tempfile
 import pytest
-from config import GameConfig, load_config
+from game.config import GameConfig, load_config
 
 
 class TestGameConfig:
