@@ -5,6 +5,7 @@ Handles the full interactive game session with menu-driven interface.
 """
 
 import os
+import time
 from typing import Optional
 
 from .config import GameConfig
@@ -29,6 +30,29 @@ def run_interactive_mode(config: GameConfig, state_file: str) -> None:
     # Main game loop
     wheel = create_wheel(config, game_state)
     _run_game_loop(wheel, game_state)
+
+
+def run_auto_spin_mode(config: GameConfig, state_file: str, delay: float = 2.0) -> None:
+    """
+    Run the auto-spin mode - continuously spin the wheel with auto-save.
+    
+    Args:
+        config: Game configuration
+        state_file: Path to game state file
+        delay: Delay between spins in seconds
+    """
+    print("🎯 Welcome to Unfair Review Game - Auto-Spin Mode")
+    print("=" * 50)
+    print(f"⏰ Auto-spinning every {delay} seconds")
+    print("🛑 Press Ctrl+C to stop and save")
+    print("=" * 50)
+
+    # Check for existing game
+    game_state = _load_or_create_game(config, state_file)
+    
+    # Auto-spin loop
+    wheel = create_wheel(config, game_state)
+    _run_auto_spin_loop(wheel, game_state, delay)
 
 
 def _load_or_create_game(config: GameConfig, state_file: str) -> GameState:
@@ -274,3 +298,69 @@ def _handle_quit_without_saving() -> bool:
         print("👋 Goodbye!")
         return True
     return False
+
+
+def _run_auto_spin_loop(wheel: GameWheel, game_state: GameState, delay: float) -> None:
+    """
+    Run the auto-spin loop - continuously spin and auto-save.
+    
+    Args:
+        wheel: GameWheel instance
+        game_state: Current game state
+        delay: Delay between spins in seconds
+    """
+    spin_count = 0
+    
+    try:
+        while not wheel.is_game_over():
+            spin_count += 1
+            current_team = game_state.get_current_team()
+            current_round = game_state.get_current_round()
+            
+            print(f"\n🎯 Auto-Spin #{spin_count} - Round {current_round}")
+            print(f"🏃 {current_team}'s turn")
+            
+            # Show current scores
+            scores = game_state.get_scores()
+            print(f"🏆 Scores: {', '.join(f'{team}: {score}' for team, score in scores.items())}")
+            
+            # Spin the wheel
+            print(f"🎡 Spinning wheel for {current_team}...")
+            outcome, result_team = wheel.spin_and_process(current_team)
+            print(f"� {outcome.label}")
+            print(f"📝 {outcome.description}")
+            
+            if outcome.score_changes:
+                print("📊 Score Changes:")
+                for team_name, change in outcome.score_changes.items():
+                    sign = "+" if change >= 0 else ""
+                    print(f"   {team_name}: {sign}{change}")
+            
+            if result_team != current_team:
+                print(f"👥 Turn passed to: {result_team}")
+            
+            # Auto-save every 5 spins
+            if spin_count % 5 == 0:
+                game_state.save_state()
+                print("💾 Auto-saved!")
+            
+            # Wait before next spin (unless game is over)
+            if not wheel.is_game_over():
+                print(f"⏰ Next spin in {delay} seconds... (Ctrl+C to stop)")
+                time.sleep(delay)
+        
+        # Game is over
+        print("\n" + "="*50)
+        print("🏁 GAME OVER!")
+        print(wheel.get_game_status())
+        
+        # Final save
+        game_state.save_state()
+        print("💾 Final game state saved!")
+        
+    except KeyboardInterrupt:
+        print(f"\n\n🛑 Auto-spin stopped after {spin_count} spins")
+        print("💾 Saving current progress...")
+        game_state.save_state()
+        print("✅ Game saved! You can resume with 'python main.py interactive' or 'python main.py auto-spin'")
+        print("👋 Goodbye!")
