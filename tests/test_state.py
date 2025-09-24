@@ -133,14 +133,15 @@ class TestGameState:
     
     def test_next_round(self):
         """Test advancing rounds."""
-        # Advance to Blue's turn
+        # Advance to Blue's turn (each turn increments round)
         self.game_state.next_turn()
         assert self.game_state.get_current_team() == "Blue"
+        assert self.game_state.get_current_round() == 3  # Started at 2, now 3
         
-        # Advance round - should reset to Red and increment round
+        # next_round() should reset to Red and increment round again
         new_round = self.game_state.next_round()
-        assert new_round == 3
-        assert self.game_state.get_current_round() == 3
+        assert new_round == 4  # Was 3, now 4
+        assert self.game_state.get_current_round() == 4
         assert self.game_state.get_current_team() == "Red"  # Reset to first team
     
     def test_round_events(self):
@@ -205,8 +206,8 @@ class TestGameState:
         """Test that state changes are saved and can be loaded."""
         # Make some changes
         self.game_state.update_scores({"Red": 7}, "Red", "test", "Test event")
-        self.game_state.next_turn()
-        self.game_state.next_round()
+        self.game_state.next_turn()  # Round 2->3, team Red->Blue
+        self.game_state.next_round()  # Round 3->4, team Blue->Red
         
         # Load state from file
         loaded_state = GameState.load_state(self.state_path)
@@ -215,7 +216,7 @@ class TestGameState:
         assert loaded_state.teams == self.teams
         assert loaded_state.get_scores()["Red"] == 22  # 15 + 7
         assert loaded_state.get_current_team() == "Red"  # Reset on new round
-        assert loaded_state.get_current_round() == 3
+        assert loaded_state.get_current_round() == 4  # Started at 2, +1 for next_turn, +1 for next_round
         assert len(loaded_state.events) == 1
         assert loaded_state.events[0].description == "Test event"
     

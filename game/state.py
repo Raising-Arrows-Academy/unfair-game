@@ -189,12 +189,16 @@ class GameState:
     def next_turn(self) -> str:
         """
         Advance to the next team's turn.
+        Each turn is a new round in this game.
 
         Returns:
             Name of the team whose turn it now is
         """
         # Advance to next team
         self.current_turn_index = (self.current_turn_index + 1) % len(self.teams)
+        
+        # Each turn is a new round
+        self.current_round += 1
         
         self.last_updated = datetime.now().isoformat()
         self.save_state()
