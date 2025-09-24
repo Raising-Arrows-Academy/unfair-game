@@ -81,9 +81,17 @@ class GameWheel:
         """
         Process a wheel outcome and update game state.
 
+        This function takes the result from spinning the wheel (like "+5 points" 
+        or "steal 10") and applies it to the game. For example, if the wheel
+        lands on "steal 5", it will find a team to steal from and update scores.
+
         Args:
-            outcome: The wheel outcome to process
-            spinning_team: Team that spun the wheel
+            outcome: The wheel outcome to process (contains action and description)
+            spinning_team: Name of the team that spun the wheel (e.g., "Red")
+
+        Example:
+            If Red spins and gets "add_fixed:5", Red's score increases by 5 points.
+            If Blue spins and gets "steal:10", Blue steals 10 points from another team.
         """
         # Process different types of actions
         if ":" in outcome.action:
@@ -104,7 +112,23 @@ class GameWheel:
 
     def _process_parameterized_action(self, outcome: WheelOutcome, team: str,
                                       action_type: str, value: str) -> None:
-        """Process actions that have parameters (e.g., add_fixed:5)."""
+        """
+        Process actions that have parameters (like add_fixed:5 or steal:10).
+
+        These actions have a format like "action_type:value" where the value
+        tells us how much to add, steal, multiply, etc.
+
+        Args:
+            outcome: The wheel outcome being processed (gets updated with results)
+            team: Name of the team performing the action (e.g., "Blue")
+            action_type: Type of action (e.g., "add_fixed", "steal", "multiply")
+            value: The amount/parameter (e.g., "5" for add_fixed:5)
+
+        Example:
+            action_type="add_fixed", value="5" → team gets 5 points
+            action_type="steal", value="10" → team steals 10 points from another team
+            action_type="multiply", value="2" → team's score is doubled
+        """
         if action_type == "add_fixed":
             points = int(value)
             # Apply rubber-banding: if team has 0 points and would lose points,

@@ -189,10 +189,21 @@ class GameState:
 
     def next_turn(self) -> str:
         """
-        Advance to the next team's turn.
+        Advance to the next team's turn and increment the round.
+
+        Each turn represents a new round in this game. When called, this will:
+        1. Move to the next team in the rotation (Red → Blue → Green → Red...)
+        2. Increase the round number by 1
+        3. Save the game state
+
+        This change was made in PR #3 so that every team turn starts a new round.
 
         Returns:
-            Name of the team whose turn it now is
+            str: Name of the team whose turn it now is
+
+        Example:
+            If it's currently Red's turn in round 2:
+            - After calling next_turn(), it becomes Blue's turn in round 3
         """
         # Advance to next team
         self.current_turn_index = (self.current_turn_index + 1) % len(self.teams)

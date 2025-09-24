@@ -16,9 +16,23 @@ def run_interactive_mode(config: GameConfig, state_file: str) -> None:
     """
     Run the interactive game mode with full menu system.
 
+    This is the main interactive mode where teachers can:
+    - Start a new game or resume an existing one
+    - Spin the wheel for teams
+    - View current scores and game status
+    - Save progress automatically
+    - Navigate through multiple rounds
+
+    The interactive mode provides a user-friendly menu that guides teachers
+    through each step of the game, making it perfect for classroom use.
+
     Args:
-        config: Game configuration
-        state_file: Path to game state file
+        config: Game configuration (teams, wheel options, scoring rules)
+        state_file: Path to save/load the game state (e.g., "game_state.json")
+
+    Example:
+        To start interactive mode from the command line:
+        python main.py interactive
     """
     print("🎯 Welcome to Unfair Review Game - Interactive Mode")
     print("=" * 50)
