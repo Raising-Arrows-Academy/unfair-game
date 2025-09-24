@@ -195,7 +195,7 @@ class GameState:
         """
         # Advance to next team
         self.current_turn_index = (self.current_turn_index + 1) % len(self.teams)
-        
+
         self.last_updated = datetime.now().isoformat()
         self.save_state()
         return self.get_current_team()

@@ -24,7 +24,8 @@ def handle_start_command(args, config: GameConfig) -> None:
         sys.exit(1)
 
     # Create new game
-    starting_points = args.points if args.points is not None else config.get_starting_points()
+    starting_points = (args.points if args.points is not None
+                       else config.get_starting_points())
     game_state = create_new_game(args.teams, starting_points, state_file=args.state)
 
     # Pick starting team
@@ -96,7 +97,7 @@ def handle_spin_command(args, config: GameConfig) -> None:
 
     # Check for game over
     if wheel.is_game_over():
-        print("\n" + "="*40)
+        print("\n" + "=" * 40)
         print(wheel.get_game_status())
 
 
@@ -138,15 +139,21 @@ def handle_config_command(args, config: GameConfig) -> None:
 
         # Edit basic settings
         try:
-            new_starting = input(f"Starting points ({config.get_starting_points()}): ").strip()
+            new_starting = input(
+                f"Starting points ({config.get_starting_points()}): "
+            ).strip()
             if new_starting:
                 config.update_starting_points(int(new_starting))
 
-            new_max = input(f"Max points ({config.get_max_points() or 'unlimited'}): ").strip()
+            new_max = input(
+                f"Max points ({config.get_max_points() or 'unlimited'}): "
+            ).strip()
             if new_max:
                 config.update_max_points(int(new_max))
 
-            new_rounds = input(f"Max rounds ({config.get_max_rounds() or 'unlimited'}): ").strip()
+            new_rounds = input(
+                f"Max rounds ({config.get_max_rounds() or 'unlimited'}): "
+            ).strip()
             if new_rounds:
                 config.update_max_rounds(int(new_rounds))
 

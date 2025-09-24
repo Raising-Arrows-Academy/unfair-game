@@ -88,7 +88,7 @@ Examples:
 
     # Interactive command
     subparsers.add_parser("interactive", help="Start interactive mode")
-    
+
     # Auto-spin command
     auto_spin_parser = subparsers.add_parser("auto-spin", help="Auto-spin mode (continuous spinning with auto-save)")
     auto_spin_parser.add_argument(
@@ -97,7 +97,7 @@ Examples:
         default=2.0,
         help="Delay between spins in seconds (default: 2.0)"
     )
-    
+
     # Simple command
     simple_parser = subparsers.add_parser("simple", help="Simple mode (press Enter to spin, minimal display)")
     simple_parser.add_argument(
