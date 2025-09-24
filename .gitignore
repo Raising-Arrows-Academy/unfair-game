@@ -180,3 +180,9 @@ cython_debug/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Game runtime files
+game_state.json
+backup_game.json
+*.game.json
+config.json

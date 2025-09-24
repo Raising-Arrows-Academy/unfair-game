@@ -1,0 +1,62 @@
+{
+  "wheel_options": [
+    {
+      "label": "+5 points",
+      "action": "add_fixed:5",
+      "weight": 3
+    },
+    {
+      "label": "+10 points",
+      "action": "add_fixed:10",
+      "weight": 2
+    },
+    {
+      "label": "+15 points",
+      "action": "add_fixed:15",
+      "weight": 1
+    },
+    {
+      "label": "-5 points",
+      "action": "add_fixed:-5",
+      "weight": 2
+    },
+    {
+      "label": "-10 points",
+      "action": "add_fixed:-10",
+      "weight": 1
+    },
+    {
+      "label": "Steal 5",
+      "action": "steal:5",
+      "weight": 2
+    },
+    {
+      "label": "Steal 10",
+      "action": "steal:10",
+      "weight": 1
+    },
+    {
+      "label": "Share +5 to all",
+      "action": "share_all:5",
+      "weight": 2
+    },
+    {
+      "label": "Swap scores",
+      "action": "swap_random",
+      "weight": 1
+    },
+    {
+      "label": "Double your score",
+      "action": "multiply:2",
+      "weight": 1
+    }
+  ],
+  "teams": [
+    "Red",
+    "Blue"
+  ],
+  "starting_points": 10,
+  "max_points": 0,
+  "max_rounds": 20,
+  "starting_round": 1
+}
