@@ -55,6 +55,32 @@ def run_auto_spin_mode(config: GameConfig, state_file: str, delay: float = 2.0) 
     _run_auto_spin_loop(wheel, game_state, delay)
 
 
+def run_simple_mode(config: GameConfig, state_file: str, verbose: bool = False) -> None:
+    """
+    Run the simple mode - press Enter to spin with minimal display.
+    
+    Args:
+        config: Game configuration
+        state_file: Path to game state file
+        verbose: Show detailed outcome information
+    """
+    print("🎯 Welcome to Unfair Review Game - Simple Mode")
+    print("=" * 50)
+    print("⚡ Press Enter to spin, 'q' to quit")
+    if verbose:
+        print("🔍 Verbose mode: showing detailed outcomes")
+    else:
+        print("💡 Use --verbose for detailed outcomes")
+    print("=" * 50)
+
+    # Check for existing game
+    game_state = _load_or_create_game(config, state_file)
+    
+    # Simple loop
+    wheel = create_wheel(config, game_state)
+    _run_simple_loop(wheel, game_state, verbose)
+
+
 def _load_or_create_game(config: GameConfig, state_file: str) -> GameState:
     """
     Load existing game or create new one based on user choice.
@@ -225,7 +251,7 @@ def _handle_spin_wheel(wheel: GameWheel, current_team: str) -> None:
         current_team: Name of current team
     """
     print(f"\n🎰 {current_team} is spinning the wheel...")
-    print("-" * 40)
+    print("-" * 40) 
 
     outcome, team = wheel.spin_and_process()
 
@@ -363,4 +389,121 @@ def _run_auto_spin_loop(wheel: GameWheel, game_state: GameState, delay: float) -
         print("💾 Saving current progress...")
         game_state.save_state()
         print("✅ Game saved! You can resume with 'python main.py interactive' or 'python main.py auto-spin'")
+        print("👋 Goodbye!")
+
+
+def _run_simple_loop(wheel: GameWheel, game_state: GameState, verbose: bool) -> None:
+    """
+    Run the simple loop - press Enter to spin with minimal display.
+    
+    Args:
+        wheel: GameWheel instance
+        game_state: Current game state
+        verbose: Show detailed outcome information
+    """
+    spin_count = 0
+    
+    try:
+        while not wheel.is_game_over():
+            current_team = game_state.get_current_team()
+            scores = game_state.get_scores()
+            current_round = game_state.get_current_round()
+            
+            # Add visual separator for each turn
+            print("\n" + "─" * 50 + '\n')
+            
+            # Show current round
+            print(f"🏁 Round {current_round}")
+            
+            # Show compact status with emojis
+            score_display = " | ".join(f"{team}: {score}" for team, score in scores.items())
+            print(f"👥 {current_team}'s turn")
+            print(f"📊 {score_display}")
+            
+            # Wait for Enter or quit command
+            user_input = input("🎲 Just press ENTER to spin (or 'q' to quit): ").strip().lower()
+            
+            if user_input in ['q', 'quit', 'exit']:
+                print("💾 Saving game...")
+                game_state.save_state()
+                print("👋 Goodbye!")
+                break
+            
+            if user_input in ['', 's', 'spin']:  # Enter, 's', or 'spin'
+                spin_count += 1
+                
+                # Show spinning action
+                print("🎡 Spinning...")
+                
+                # Spin the wheel (same pattern as regular interactive mode)
+                outcome, result_team = wheel.spin_and_process()
+                
+                if verbose:
+                    # Show detailed outcome 
+                    print(f"🎯 RESULT: {outcome.label}")
+                    print(f"📝 {outcome.description}")
+                    
+                    if outcome.score_changes:
+                        print("📊 Score Changes:")
+                        for team_name, change in outcome.score_changes.items():
+                            sign = "+" if change >= 0 else ""
+                            print(f"   {team_name}: {sign}{change}")
+                else:
+                    # Show compact outcome with clear result indicator
+                    print(f"🎯 RESULT: {outcome.label}", end="")
+                    if outcome.score_changes:
+                        changes = []
+                        for team_name, change in outcome.score_changes.items():
+                            sign = "+" if change >= 0 else ""
+                            changes.append(f"{team_name}: {sign}{change}")
+                        print(f" → {', '.join(changes)}")
+                    else:
+                        print()
+                
+                # Pause to let result be absorbed
+                input("\nPress ENTER to continue...")
+                
+                # Advance to next team's turn (same as regular interactive mode)
+                next_team = wheel.advance_turn()
+                
+                # Show turn transition
+                if verbose:
+                    print(f"➡️  Next up: {next_team}")
+                
+                # Auto-save every 10 spins in simple mode
+                if spin_count % 10 == 0:
+                    game_state.save_state()
+                    print("💾 Auto-saved!")
+            else:
+                print("💡 Options: press ENTER (spin), type 's' (spin), or 'q' (quit)")
+        
+        # Game is over
+        if wheel.is_game_over():
+            print("\n" + "═" * 50)
+            print("🏁 GAME OVER!")
+            print("═" * 50)
+            
+            # Get scores to determine winner
+            scores = game_state.get_scores()
+            max_score = max(scores.values())
+            winners = [team for team, score in scores.items() if score == max_score]
+            
+            if len(winners) == 1:
+                print(f"🏆 The Unfair Game Winner is {winners[0]}!")
+                print(f"🎉 Final Score: {max_score} points")
+            else:
+                print(f"🏆 The Unfair Game Winners are: {' and '.join(winners)}!")
+                print(f"🎉 Final Score: {max_score} points each")
+            
+            print("\n" + wheel.get_game_status())
+            
+            # Final save
+            game_state.save_state()
+            print("💾 Final game state saved!")
+        
+    except KeyboardInterrupt:
+        print(f"\n\n🛑 Simple mode stopped after {spin_count} spins")
+        print("💾 Saving current progress...")
+        game_state.save_state()
+        print("✅ Game saved!")
         print("👋 Goodbye!")

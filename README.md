@@ -38,6 +38,27 @@ This starts a full interactive session where you can:
 - Navigate through turns automatically
 - Save and load games
 
+#### Simple Mode (Quick Play)
+```bash
+python main.py simple
+```
+A streamlined mode perfect for fast-paced classroom sessions:
+- Clean, minimal display
+- Just press Enter to spin
+- Automatic team rotation
+- Less visual clutter
+- Use `--verbose` flag for detailed outcomes
+
+#### Auto-Spin Mode (Hands-Free)
+```bash
+python main.py auto-spin
+```
+Continuous spinning with automatic progression:
+- No manual input needed
+- Configurable delay between spins
+- Auto-saves progress
+- Perfect for demonstrations
+
 ## Example Game Session
 
 ```bash
@@ -92,6 +113,9 @@ python main.py spin
 | `python main.py start Team1 Team2 ...` | Start new game with teams |
 | `python main.py spin [TeamName]` | Spin wheel (current team or specific team) |
 | `python main.py interactive` | Start interactive game session |
+| `python main.py simple` | Start simple mode (minimal display) |
+| `python main.py simple --verbose` | Simple mode with detailed outcomes |
+| `python main.py auto-spin` | Auto-spin mode (hands-free) |
 | `python main.py status` | Show current game state |
 | `python main.py config show` | Display current settings |
 | `python main.py config edit` | Modify game configuration |

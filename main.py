@@ -8,7 +8,7 @@ import argparse
 import sys
 
 from game.config import GameConfig
-from game.interactive import run_interactive_mode, run_auto_spin_mode
+from game.interactive import run_interactive_mode, run_auto_spin_mode, run_simple_mode
 from game.commands import (
     handle_start_command,
     handle_spin_command,
@@ -29,6 +29,8 @@ Examples:
   python main.py spin Blue                     # Spin wheel for Blue team
   python main.py load game.json                # Load saved game
   python main.py interactive                   # Start interactive mode
+  python main.py simple                        # Simple mode (press Enter to spin)
+  python main.py simple --verbose              # Simple mode with details
   python main.py auto-spin                     # Auto-spin mode (continuous)
   python main.py auto-spin --delay 1.5         # Auto-spin with custom delay
   python main.py config edit                   # Edit configuration
@@ -95,6 +97,14 @@ Examples:
         default=2.0,
         help="Delay between spins in seconds (default: 2.0)"
     )
+    
+    # Simple command
+    simple_parser = subparsers.add_parser("simple", help="Simple mode (press Enter to spin, minimal display)")
+    simple_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Show detailed outcome information"
+    )
 
     # Config command
     config_parser = subparsers.add_parser("config", help="Manage configuration")
@@ -142,6 +152,9 @@ def main():
 
         elif args.command == "auto-spin":
             run_auto_spin_mode(config, args.state, args.delay)
+
+        elif args.command == "simple":
+            run_simple_mode(config, args.state, args.verbose)
 
         else:
             # No command provided - show help or start interactive mode
