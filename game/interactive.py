@@ -353,7 +353,7 @@ def _run_auto_spin_loop(wheel: GameWheel, game_state: GameState, delay: float) -
             # Spin the wheel
             print(f"🎡 Spinning wheel for {current_team}...")
             outcome, result_team = wheel.spin_and_process(current_team)
-            print(f"� {outcome.label}")
+            print(f"🎯 {outcome.label}")
             print(f"📝 {outcome.description}")
             
             if outcome.score_changes:
