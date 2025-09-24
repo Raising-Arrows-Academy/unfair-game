@@ -153,12 +153,12 @@ class TestGameIntegration:
         initial_round = game_state.get_current_round()
         initial_team = game_state.get_current_team()
         
-        # Use wheel to advance turn
+        # Use wheel to advance turn (each turn increments round)
         next_team = wheel.advance_turn()
         
         # State should be updated
         assert game_state.get_current_team() == next_team
-        assert game_state.get_current_round() == initial_round  # Same round
+        assert game_state.get_current_round() == initial_round + 1  # Round should increment
         
         # Use wheel to advance round
         new_round = wheel.advance_round()
