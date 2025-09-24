@@ -164,7 +164,8 @@ class GameState:
         self.last_updated = datetime.now().isoformat()
         self.save_state()
 
-    def add_event(self, action: str, description: str, team: str = "", score_changes: Optional[Dict[str, int]] = None) -> None:
+    def add_event(self, action: str, description: str, team: str = "",
+                  score_changes: Optional[Dict[str, int]] = None) -> None:
         """
         Add a simple event to the game history.
 

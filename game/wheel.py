@@ -24,6 +24,14 @@ class WheelOutcome:
     """
 
     def __init__(self, label: str, action: str, weight: int):
+        """
+        Initialize a wheel outcome.
+
+        Args:
+            label: Human-readable description of the outcome (e.g., "+5 points")
+            action: Action identifier for processing (e.g., "add_fixed:5")
+            weight: Weight used for random selection (higher = more likely)
+        """
         self.label = label
         self.action = action
         self.weight = weight
@@ -60,7 +68,8 @@ class GameWheel:
         wheel_options = self.config.get_wheel_options()
 
         # Extract labels, actions, and weights
-        options = [(opt["label"], opt["action"], opt["weight"]) for opt in wheel_options]
+        options = [(opt["label"], opt["action"], opt["weight"])
+                   for opt in wheel_options]
         weights = [opt[2] for opt in options]
 
         # Randomly select based on weights
@@ -79,9 +88,11 @@ class GameWheel:
         # Process different types of actions
         if ":" in outcome.action:
             action_type, value = outcome.action.split(":", 1)
-            self._process_parameterized_action(outcome, spinning_team, action_type, value)
+            self._process_parameterized_action(
+                outcome, spinning_team, action_type, value)
         else:
-            self._process_simple_action(outcome, spinning_team, outcome.action)
+            self._process_simple_action(
+                outcome, spinning_team, outcome.action)
 
         # Update game state with the outcome
         self.game_state.update_scores(
@@ -91,17 +102,21 @@ class GameWheel:
             outcome.description
         )
 
-    def _process_parameterized_action(self, outcome: WheelOutcome, team: str, 
-                                    action_type: str, value: str) -> None:
+    def _process_parameterized_action(self, outcome: WheelOutcome, team: str,
+                                      action_type: str, value: str) -> None:
         """Process actions that have parameters (e.g., add_fixed:5)."""
         if action_type == "add_fixed":
             points = int(value)
-            # Apply rubber-banding: if team has 0 points and would lose points, give +5 instead
+            # Apply rubber-banding: if team has 0 points and would lose points,
+            # give +5 instead
             if self.game_state.get_scores()[team] <= 0 and points < 0:
                 points = 5
-                outcome.description = f"{team} would lose points but gets +5 instead (rubber-band effect)!"
+                outcome.description = (
+                    f"{team} would lose points but gets +5 "
+                    "instead (rubber-band effect)!")
             else:
-                outcome.description = f"{team} {'gains' if points >= 0 else 'loses'} {abs(points)} points!"
+                sign = 'gains' if points >= 0 else 'loses'
+                outcome.description = f"{team} {sign} {abs(points)} points!"
 
             outcome.score_changes[team] = points
 
@@ -127,45 +142,54 @@ class GameWheel:
             outcome.score_changes[team] = score_change
 
             if max_points > 0 and new_score == max_points:
-                outcome.description = f"{team} multiplies score by {multiplier} (capped at {max_points})!"
+                outcome.description = (
+                    f"{team} multiplies score by {multiplier} "
+                    f"(capped at {max_points})!")
             else:
                 outcome.description = f"{team} multiplies their score by {multiplier}!"
 
         elif action_type == "divide":
             divisor = int(value)
             current_score = self.game_state.get_scores()[team]
-            new_score = max((current_score + divisor - 1) // divisor, 0)  # Round up division, min 0
+            # Round up division, min 0
+            new_score = max((current_score + divisor - 1) // divisor, 0)
             score_change = new_score - current_score
             outcome.score_changes[team] = score_change
             outcome.description = f"{team} divides their score by {divisor}!"
 
-    def _process_simple_action(self, outcome: WheelOutcome, team: str, action: str) -> None:
+    def _process_simple_action(self, outcome: WheelOutcome, team: str,
+                               action: str) -> None:
         """Process simple actions without parameters."""
         if action == "swap_random":
             self._process_swap(outcome, team)
         elif action == "wildcard":
             # Wildcard - teacher's choice, default to +5 points
             outcome.score_changes[team] = 5
-            outcome.description = f"Wildcard! {team} completes a mini-challenge and gains 5 points!"
+            outcome.description = (
+                f"Wildcard! {team} completes a mini-challenge "
+                "and gains 5 points!")
         else:
             # Unknown action, give default points
             outcome.score_changes[team] = 5
             outcome.description = f"{team} gets a mystery bonus: +5 points!"
 
-    def _process_steal(self, outcome: WheelOutcome, stealing_team: str, amount: int) -> None:
+    def _process_steal(self, outcome: WheelOutcome, stealing_team: str,
+                       amount: int) -> None:
         """Process steal actions."""
         scores = self.game_state.get_scores()
 
         # Find teams that have points to steal
         eligible_victims = [
-            team for team in self.game_state.teams 
+            team for team in self.game_state.teams
             if team != stealing_team and scores[team] > 0
         ]
 
         if not eligible_victims:
             # No one to steal from, give consolation points
             outcome.score_changes[stealing_team] = 3
-            outcome.description = f"{stealing_team} tried to steal but no one has points! Gets 3 consolation points."
+            outcome.description = (
+                f"{stealing_team} tried to steal but no one "
+                "has points! Gets 3 consolation points.")
             return
 
         # Randomly select a victim
@@ -174,15 +198,20 @@ class GameWheel:
 
         outcome.score_changes[stealing_team] = actual_stolen
         outcome.score_changes[victim] = -actual_stolen
-        outcome.description = f"{stealing_team} steals {actual_stolen} points from {victim}!"
+        outcome.description = (
+            f"{stealing_team} steals {actual_stolen} "
+            f"points from {victim}!")
 
     def _process_swap(self, outcome: WheelOutcome, swapping_team: str) -> None:
         """Process score swap actions."""
-        other_teams = [team for team in self.game_state.teams if team != swapping_team]
+        other_teams = [team for team in self.game_state.teams
+                       if team != swapping_team]
 
         if not other_teams:
             # Only one team (shouldn't happen in normal play)
-            outcome.description = f"{swapping_team} tries to swap but there's no other team!"
+            outcome.description = (
+                f"{swapping_team} tries to swap but "
+                "there's no other team!")
             return
 
         # Randomly select team to swap with
@@ -277,7 +306,8 @@ class GameWheel:
             if len(winners) == 1:
                 lines.append(f"Winner: {winners[0]} with {max_score} points!")
             else:
-                lines.append(f"Tie between: {', '.join(winners)} with {max_score} points!")
+                winners_str = ', '.join(winners)
+                lines.append(f"Tie between: {winners_str} with {max_score} points!")
 
         return "\n".join(lines)
 
